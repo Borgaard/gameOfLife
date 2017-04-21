@@ -17,10 +17,16 @@ public class Life {
             {false, false, false, false, true},
             {false, false, false, false, false}
         };
-        Life.PrintBoard(nestOfBools);
-        boolean[][] nextGenOfBools = Life.NewBunnies(nestOfBools);
-        System.out.println(".   .   .   .   .");
-        Life.PrintBoard(nextGenOfBools);
+//        Life.PrintBoard(nestOfBools);
+//        boolean[][] nextGenOfBools = Life.NewBunnies(nestOfBools);
+//        System.out.println(".   .   .   .   .");
+//        Life.PrintBoard(nextGenOfBools);
+        for (int i = 0; i < 100; i++) {
+            Life.PrintBoard(nestOfBools);
+            nestOfBools = Life.NewBunnies(nestOfBools);
+            System.out.println(".   .   .   .   . current gen: " +i);
+
+        }
     }
     public static void PrintBoard(boolean[][] board) {
       for(int i = 0; i < board.length; i++) {
