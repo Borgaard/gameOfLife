@@ -21,17 +21,18 @@ public class Life {
 //        boolean[][] nextGenOfBools = Life.NewBunnies(nestOfBools);
 //        System.out.println(".   .   .   .   .");
 //        Life.PrintBoard(nextGenOfBools);
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) { //change back to 20 at some point D: 
             Life.PrintBoard(nestOfBools);
-            nestOfBools = Life.NewBunnies(nestOfBools);
+            nestOfBools = Life.NewTorusDonutBunnies(nestOfBools);
             System.out.println(".   .   .   .   . current gen: " +i);
 
         }
-        int modExample = -1 % 12;
+        int modExample = -7 % 12;
         System.out.println(modExample);
+        System.out.println(Life.PythonMod(-1, 5));
     }
     public static void PrintBoard(boolean[][] board) {
-      for(int i = 0; i < board.length; i++) {
+      for(int i = 0; i < board.length; i++) { //         for (boolean[] board1 : board) {
         String line = "";
         for (int j = 0; j < board[i].length; j++) {
           if(board[i][j]) {
@@ -118,6 +119,16 @@ public class Life {
         if column+1 == columns/currentBoard[0].length then replace column+1 with 0
             
     */
+    // how: take traditional JavaMod and add the result to mod, and return.
+    // use: every time attempt to access cell, if cell is off the edge, we need to map it to other edge.
+    public static int PythonMod(int baseInput, int mod) {
+        int tempJavaMod = baseInput % mod;
+        if (tempJavaMod < 0){
+            return tempJavaMod + mod;
+        } else {
+            return tempJavaMod;
+        }
+    }
     public static boolean[][] NewTorusDonutBunnies(boolean[][] currentBoard) { // currentBoard enables us to look at the cell in question. boolean cell = currentBoard[row][column];
         int rows = currentBoard.length; // number of rows in the entire board.
         int columns = currentBoard[0].length; // number of columns in the entire board. is equiv to currentBoard[row].length.
@@ -135,29 +146,29 @@ public class Life {
                 */
                 
                 //System.out.println("row is " +row+ "; column is " +column+ ". Neighbors: " +livingNeighbors);
-                if(row > 0 && column > 0 && currentBoard[row-1][column-1] == true){ // top left, 1 above and 1 left on row axis.
+                if(currentBoard[Life.PythonMod(row-1, rows)][Life.PythonMod(column-1, columns)] == true){ // top left, 1 above and 1 left on row axis.
                     livingNeighbors += 1;
                 }
-                if(row > 0 && currentBoard[row-1][column]){ //top center; 1 above selected cell on row axis.
+                if(currentBoard[Life.PythonMod(row-1, rows)][column]){ //top center; 1 above selected cell on row axis.
                     livingNeighbors += 1;
                 }
-                if(row > 0 && column < columns -1 && currentBoard[row-1][column+1] == true){ // top right.
+                if(currentBoard[Life.PythonMod(row-1, rows)][Life.PythonMod(column+1, columns)] == true){ // top right.
                     livingNeighbors += 1;
                 }
-                if(column < columns-1 && currentBoard[row][column+1] == true){ // middle right. if in 4th column, we don't want to look at the 5th on the end.
+                if(currentBoard[row][Life.PythonMod(column+1, columns)] == true){ // middle right. if in 4th column, we don't want to look at the 5th on the end.
                     livingNeighbors += 1;
                 }
                 // testing down below...
-                if(row < rows-1 && column < columns-1 && currentBoard[row+1][column+1] == true){ // bottom right. 
+                if(currentBoard[Life.PythonMod(row+1, rows)][Life.PythonMod(column+1, columns)] == true){ // bottom right. 
                     livingNeighbors += 1;
                 } 
-                if(row < rows-1 && currentBoard[row+1][column] == true){ // bottom center.
+                if(currentBoard[Life.PythonMod(row+1, rows)][column] == true){ // bottom center.
                     livingNeighbors += 1;
                 }
-                if(row < rows -1 && column > 0 && currentBoard[row+1][column-1] == true){ // bottom left
+                if(currentBoard[Life.PythonMod(row+1, rows)][Life.PythonMod(column-1, columns)] == true){ // bottom left
                     livingNeighbors += 1;
                 }
-                if(column > 0 && currentBoard[row][column-1] == true){ //middle left.
+                if(currentBoard[row][Life.PythonMod(column-1, columns)] == true){ //middle left.
                     livingNeighbors += 1;
                 }
                 // if livingNeighbors is 2 || 3, in the nextGen at the current [row][column], set to true.
