@@ -1,0 +1,21 @@
+    2  git
+   44  git clone git@github.com:Borgaard/gameOfLife.git
+   55  git clone git@github.com:Borgaard/gameOfLife.git
+   83  git init
+   84  git add .
+   85  git commit -m "preparing to clean gradle after changing name from Foogle to DogParty"
+   86  git config --global user.email "nicoleborgaard@gmail.com"
+   87  git config --global user.name "Nicole Borgaard"
+   89  git commit -m "preparing to clean gradle after changing name from Foogle to DogParty"
+   92  git add .
+   93  git commit -m "adding design details and descriptions"
+   94  git remote add origin git@github.com:Borgaard/ABND-dogBirthdayParty.git
+   95  git push -u origin master
+  106* git add .
+  107* git commit -m "updating NewTorusDonutBunnies to wrap around board using PythonMod behavior"
+  109* git add .
+  111* git add -A
+  113* git commit -m "updating NewTorusDonutBunnies to wrap around board using PythonMod behavior."
+  114* git remote -v
+  115* git push origin master
+  137  history | grep "git"
