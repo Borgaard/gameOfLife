@@ -5,180 +5,60 @@
  */
 
 /**
+ * HOW TO MAKE THIS OOPIER:
+ * Overview:
+ *  Current implementation is not OOP because it does not encapsulate,
+ * does not use classes nor methods, and doesn't use instance objects.
+ *  Steps:
+ *      Create a Board class, which includes:
+ *          - Defining the data members (such as boolean[][] dataBoard which holds each individual tile in nestOfBools)
+ *          - Define the constructor which sets up internal data (instance of Board class). This uses the data members and input given.
+ *          - Move every method except main from Life.java into Board.java because those methods are concerned with the context of a Board,              but are not yet part of the class.
+ *          - Remove static attribute of all methods because we want them to be available on all instances. Static makes a method available              to the class but not an instance. This worked for functional coding, but doesn't for OOP.
+ *          - Remove parameters of functions that took boolean[][] and change return type to Board class because we already have the data                as a data member and want to return another instance of the board rather than raw data which was the boolean[][]. The raw                  data has just data, while the Board class has data & functionality.
+ *          - Fix the types in Life.java by using the Board class and its methods in main of Life.java
+ * 
+ *  Advantage of OOP for this program:
+ *      Will give us a more concrete implementation of the Life board and is
+ *      more specialized (will revisit later).
+ * Disadvantages of OOP:
+ *      Because you have a specific data structure (nestOfBools or Board?) you
+ *      sacrifice the ability to use that data in other contexts (example: some
+ *      other method that takes boolean[][] can't use it because Board abstracts
+ *      away how to use it in private methods and data.).
+ * Advantages of functional:
+ *      Flexibility of data, such as anything that allows input of boolean[][]
+ *      could be used in a future program because it is public.
+ * Disadvantages of functional, and why we transitioned this program to OOP:
+ *      1: Little less organized because it's a bunch of functions, and it's
+ *         easier to add unneeded things; there isn't a necessarily an
+ *         obvious place to put them. These functions might have nothing to do with
+ *         our boolean[][].
+ *      2: Because we're using a generic data structure (boolean[][]), we can't bundle (functions with methods & data attached) specific
+ *         behavior together nicely.
  *
  * @author borgaard
  */
 public class Life {
-    public static void main(String[] args) {
-        boolean[][] nestOfBools = {
-            {false, false, false, false, false},
-            {false, false, false, true, true},
-            {false, false, true, false, true},
-            {false, false, false, false, true},
-            {false, false, false, false, false}
-        };
+
+  public static void main(String[] args) {
+    boolean[][] nestOfBools = {
+      {false, false, false, false, false},
+      {false, false, false, true, true},
+      {false, false, true, false, true},
+      {false, false, false, false, true},
+      {false, false, false, false, false}
+    };
+    Board initialInstance = new Board(nestOfBools);
 //        Life.PrintBoard(nestOfBools);
 //        boolean[][] nextGenOfBools = Life.NewBunnies(nestOfBools);
 //        System.out.println(".   .   .   .   .");
 //        Life.PrintBoard(nextGenOfBools);
-        for (int i = 0; i < 10; i++) { //change back to 20 at some point D: 
-            Life.PrintBoard(nestOfBools);
-            nestOfBools = Life.NewTorusDonutBunnies(nestOfBools);
-            System.out.println(".   .   .   .   . current gen: " +i);
+    for (int i = 0; i < 10; i++) { //change back to 20 at some point D: 
+      initialInstance.Print();
+      initialInstance = initialInstance.NewTorusWrappingGeneration(); //overwrites previous board
+      System.out.println(".   .   .   .   . current gen: " + i);
 
-        }
-        int modExample = -7 % 12;
-        System.out.println(modExample);
-        System.out.println(Life.PythonMod(-1, 5));
     }
-    public static void PrintBoard(boolean[][] board) {
-      for(int i = 0; i < board.length; i++) { //         for (boolean[] board1 : board) {
-        String line = "";
-        for (int j = 0; j < board[i].length; j++) {
-          if(board[i][j]) {
-            line += "#";
-          } else {
-            line += "_";
-          }
-        }
-        System.out.println(line);
-      }
-    }
-    public static boolean[][] NewBunnies(boolean[][] currentBoard) { // currentBoard enables us to look at the cell in question. boolean cell = currentBoard[row][column];
-        int rows = currentBoard.length; // number of rows in the entire board.
-        int columns = currentBoard[0].length; // number of columns in the entire board. is equiv to currentBoard[row].length.
-        boolean[][] nextGen = new boolean[rows][columns]; // creates another array of arrays with the same dim as our 5x5 currentBoard. 
-        for (int row = 0; row < rows; row++) {
-            for (int column = 0; column < columns; column++) { // clockwise conditionals:
-                int livingNeighbors = 0;
-                //System.out.println("row is " +row+ "; column is " +column+ ". Neighbors: " +livingNeighbors);
-                if(row > 0 && column > 0 && currentBoard[row-1][column-1] == true){ // top left, 1 above and 1 left on row axis.
-                    livingNeighbors += 1;
-                }
-                if(row > 0 && currentBoard[row-1][column]){ //top center; 1 above selected cell on row axis.
-                    livingNeighbors += 1;
-                }
-                if(row > 0 && column < columns -1 && currentBoard[row-1][column+1] == true){ // top right.
-                    livingNeighbors += 1;
-                }
-                if(column < columns-1 && currentBoard[row][column+1] == true){ // middle right. if in 4th column, we don't want to look at the 5th on the end.
-                    livingNeighbors += 1;
-                }
-                // testing down below...
-                if(row < rows-1 && column < columns-1 && currentBoard[row+1][column+1] == true){ // bottom right. 
-                    livingNeighbors += 1;
-                } 
-                if(row < rows-1 && currentBoard[row+1][column] == true){ // bottom center.
-                    livingNeighbors += 1;
-                }
-                if(row < rows -1 && column > 0 && currentBoard[row+1][column-1] == true){ // bottom left
-                    livingNeighbors += 1;
-                }
-                if(column > 0 && currentBoard[row][column-1] == true){ //middle left.
-                    livingNeighbors += 1;
-                }
-                // if livingNeighbors is 2 || 3, in the nextGen at the current [row][column], set to true.
-                if(livingNeighbors == 2 || livingNeighbors == 3){
-                    nextGen[row][column] = true;
-                }
-                /*we need to check the following coordinates in addition
-                    x[row-1][column+1] top right row > 0
-                    x[row][column+1], middle right
-                    x[row+1][column+1] bottom right 
-                    x[row+1][column] bottom center
-                    x[row][column-1] bottom left
-                    x[row][column-1] middle left
-                    and/or make sure they are not off the edge of the board
-                after all that if livingNeighbors is 2 or 3 then set nextGen[row][column] to true else false
-                                    row -1 should not be above the board. 
-                                    row > 0
-                {      column = 0  column = 1  column = 2  column = 3  column = 4; each cell.
-     each row;  row = 0 {false, false, false, false, false},
-                row = 1 {false, false, false, true, true},     column + 1 should not be off the board
-    column > 0  row = 2 {false, false, true, false, true},     column < currentBoard[row].length
-                row = 3 {false, false, false, false, true},
-                row = 4 {false, false, false, false, false}
-                };
-                                    row +1 should not be off the board
-                                    row < currentBoard.length
-                
-                */
-            }
-        }
-        return nextGen;
-    }
-    
-    /*      TODO rows:
-        wrap around board to allow left neighbor to become right neighbor
-            if row-1 == -1 then replace row-1 with rows-1/currentBoard.length-1
-        wrap around from right neighbor to become left
-            if row+1 == rows/currentBoard.length then replace row+1 with 0 
-            
-            TODO columns:
-        if column-1 == -1 then replace column-1 with columns-1/currentBoard[0].length
-        if column+1 == columns/currentBoard[0].length then replace column+1 with 0
-            
-    */
-    // how: take traditional JavaMod and add the result to mod, and return.
-    // use: every time attempt to access cell, if cell is off the edge, we need to map it to other edge.
-    public static int PythonMod(int baseInput, int mod) {
-        int tempJavaMod = baseInput % mod;
-        if (tempJavaMod < 0){
-            return tempJavaMod + mod;
-        } else {
-            return tempJavaMod;
-        }
-    }
-    public static boolean[][] NewTorusDonutBunnies(boolean[][] currentBoard) { // currentBoard enables us to look at the cell in question. boolean cell = currentBoard[row][column];
-        int rows = currentBoard.length; // number of rows in the entire board.
-        int columns = currentBoard[0].length; // number of columns in the entire board. is equiv to currentBoard[row].length.
-        boolean[][] nextGen = new boolean[rows][columns]; // creates another array of arrays with the same dim as our 5x5 currentBoard. 
-        for (int row = 0; row < rows; row++) {
-            for (int column = 0; column < columns; column++) { // clockwise conditionals:
-                int livingNeighbors = 0;
-                /* TODO:
-                need to change the if statements so that we no longer bother checking these row-1/column-1 conditions 
-                because we're giong to wrap around the edge of the board and not try to find something on the end. to do this,
-                we'll make a function wrapArounder, which will take 2 integers and return and integer. the first int is test value,
-                second int is length of the column or row. behavior will be: if test value is -1 return the length-1.
-                if the test value = length then return 0, otherwise/else return test value given.
-      
-                */
-                
-                //System.out.println("row is " +row+ "; column is " +column+ ". Neighbors: " +livingNeighbors);
-                if(currentBoard[Life.PythonMod(row-1, rows)][Life.PythonMod(column-1, columns)] == true){ // top left, 1 above and 1 left on row axis.
-                    livingNeighbors += 1;
-                }
-                if(currentBoard[Life.PythonMod(row-1, rows)][column]){ //top center; 1 above selected cell on row axis.
-                    livingNeighbors += 1;
-                }
-                if(currentBoard[Life.PythonMod(row-1, rows)][Life.PythonMod(column+1, columns)] == true){ // top right.
-                    livingNeighbors += 1;
-                }
-                if(currentBoard[row][Life.PythonMod(column+1, columns)] == true){ // middle right. if in 4th column, we don't want to look at the 5th on the end.
-                    livingNeighbors += 1;
-                }
-                // testing down below...
-                if(currentBoard[Life.PythonMod(row+1, rows)][Life.PythonMod(column+1, columns)] == true){ // bottom right. 
-                    livingNeighbors += 1;
-                } 
-                if(currentBoard[Life.PythonMod(row+1, rows)][column] == true){ // bottom center.
-                    livingNeighbors += 1;
-                }
-                if(currentBoard[Life.PythonMod(row+1, rows)][Life.PythonMod(column-1, columns)] == true){ // bottom left
-                    livingNeighbors += 1;
-                }
-                if(currentBoard[row][Life.PythonMod(column-1, columns)] == true){ //middle left.
-                    livingNeighbors += 1;
-                }
-                // if livingNeighbors is 2 || 3, in the nextGen at the current [row][column], set to true.
-                if(livingNeighbors == 2 || livingNeighbors == 3){
-                    nextGen[row][column] = true;
-                }
-  
-            }
-        }
-        return nextGen;
-    }
-    
+  }
 }
